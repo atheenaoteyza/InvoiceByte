@@ -27,6 +27,7 @@ export const Login = () => {
         const userId = sessionStorage.getItem("uid");
         if (userId) {
           await dispatch(setInvoiceByUserAsync(userId));
+          navigate("/");
         }
       }
     } catch (error) {
