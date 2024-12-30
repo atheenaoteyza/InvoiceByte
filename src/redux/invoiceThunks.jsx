@@ -3,6 +3,7 @@ import { signInWithEmailAndPassword } from "firebase/auth";
 import { auth, app } from "../firebaseConfig";
 import { getDatabase, ref, push, get } from "firebase/database";
 import { setInvoicesByUser } from "./invoiceSlice";
+import { v4 as uuidv4 } from "uuid";
 
 export const authenticateUser = (credentials) => async (dispatch) => {
   try {
@@ -41,3 +42,13 @@ export const setInvoiceByUserAsync = (userId) => async (dispatch) => {
     console.error("Error adding invoice:", error);
   }
 };
+
+export const addInvoiceOptimistically =
+  (invoice, userId) => async (dispatch) => {
+    try {
+      const shortId = uuidv4().split("-")[0].slice(0, 4);
+      const uuid = `#${userId.slice(0, 6)}-${shortId}`;
+      const date = new Date();
+      const paymentTerms = parseFloat(invoice.paymentTerms);
+    } catch (error) {}
+  };
