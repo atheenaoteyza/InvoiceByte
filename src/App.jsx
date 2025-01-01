@@ -2,6 +2,7 @@ import AppRoutes from "./components/AppRoutes";
 import { BrowserRouter as Router } from "react-router-dom";
 import { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
+import { useNavigate } from "react-router-dom";
 import {
   setInvoiceByUserAsync,
   updateInvoiceAsync,
@@ -12,11 +13,15 @@ function App() {
   const dispatch = useDispatch();
   const userId = sessionStorage.getItem("uid");
   const invoices = useSelector((state) => state.invoices.invoices);
+  const navigate = useNavigate();
 
   useEffect(() => {
     if (userId) {
       dispatch(login());
       dispatch(setInvoiceByUserAsync(userId));
+    }
+    if (!userId) {
+      navigate("/login");
     }
   }, [dispatch, userId]);
 
