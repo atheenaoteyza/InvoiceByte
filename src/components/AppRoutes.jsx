@@ -6,15 +6,15 @@ import InvoiceById from "./pages/InvoiceById";
 
 const AppRoutes = () => {
   return (
-    <div>
+    <>
       <Header />
       <Routes>
         <Route path="/" element={<Home />} />
-        <Route path="/register" element={<Register></Register>} />
+        <Route path="/register" element={<Register />} />
         <Route path="/login" element={<Login />} />
-        <Route path="/invoice" element={<InvoiceById></InvoiceById>}></Route>
+        <Route path="/invoice" element={<InvoiceById />} />
       </Routes>
-    </div>
+    </>
   );
 };
 

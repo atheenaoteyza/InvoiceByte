@@ -1,13 +1,11 @@
-import AppRoutes from "./components/AppRoutes";
-import { BrowserRouter as Router } from "react-router-dom";
 import { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { useNavigate } from "react-router-dom";
 import {
   setInvoiceByUserAsync,
   updateInvoiceAsync,
 } from "./redux/invoiceThunks";
 import { login } from "./redux/authSlice";
+import { useNavigate } from "react-router-dom";
 
 function App() {
   const dispatch = useDispatch();
@@ -19,33 +17,24 @@ function App() {
     if (userId) {
       dispatch(login());
       dispatch(setInvoiceByUserAsync(userId));
-    }
-    if (!userId) {
+    } else {
       navigate("/login");
     }
   }, [dispatch, userId]);
 
   useEffect(() => {
     if (invoices && userId) {
-      // Call updateInvoiceAsync when invoices changes
       const updateInvoices = async () => {
         try {
-          // Dispatch the async action to update invoices
           await dispatch(updateInvoiceAsync(invoices, userId));
         } catch (error) {
-          // Dispatch an error message if something goes wrong
-          console.error("error update :", error);
+          console.error("error update:", error);
         }
       };
 
-      updateInvoices(); // Trigger the async function
+      updateInvoices();
     }
-  }, [invoices, dispatch, userId]); // Dependencies to trigger the effect
-  return (
-    <Router>
-      <AppRoutes></AppRoutes>
-    </Router>
-  );
+  }, [invoices, dispatch, userId]);
 }
 
 export default App;
