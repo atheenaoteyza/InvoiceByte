@@ -1,0 +1,21 @@
+.toast-opacity {
+  opacity: 0.8;
+}
+
+.custom-progress-bar {
+  background-color: #7c5dfa !important;
+}
+
+.loginGuest {
+  display: flex;
+  justify-content: flex-end;
+}
+
+.borders {
+  border-radius: 10px;
+  margin: 0.5rem;
+  padding: 0.5rem 1rem 0.5rem 1rem;
+  font-size: 1rem;
+
+  /* 3D effect */
+}
