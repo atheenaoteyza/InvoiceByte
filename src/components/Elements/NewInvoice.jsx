@@ -8,6 +8,7 @@ import { toast } from "react-toastify";
 export const NewInvoice = ({ setNewInvoice, type }) => {
   const userId = sessionStorage.getItem("uid");
   const dispatch = useDispatch();
+
   const [invoiceData, setInvoiceData] = useState({
     uiid: "",
     createdAt: "",
@@ -25,7 +26,14 @@ export const NewInvoice = ({ setNewInvoice, type }) => {
     clientCity: "",
     clientPostCode: "",
     clientCountry: "",
-    items: [],
+    items: [
+      {
+        name: "Item 1", // Default item name
+        quantity: 1, // Default quantity
+        price: 0, // Default price
+        total: 0, // Default total
+      },
+    ],
     total: 0,
   });
   const invoiceId = location.search.substring(1);
@@ -38,8 +46,11 @@ export const NewInvoice = ({ setNewInvoice, type }) => {
   }, [invoice]);
 
   useEffect(() => {
-    if (type == "edit") {
-      const formatted = new Date(invoice.createdAt);
+    if (type === "edit") {
+      // Ensure createdAt has a valid value, otherwise use current date
+      const formatted = new Date(invoice.createdAt || new Date())
+        .toISOString()
+        .split("T")[0];
       setInvoiceData({
         uiid: invoice.id,
         status: invoice.status,
@@ -48,24 +59,30 @@ export const NewInvoice = ({ setNewInvoice, type }) => {
         paymentTerms: invoice.paymentTerms,
         clientName: invoice.clientName,
         clientEmail: invoice.clientEmail,
-        senderStreet: invoice.senderAddress.street,
-        senderCity: invoice.senderAddress.city,
-        senderPostCode: invoice.senderAddress.postCode,
-        senderCountry: invoice.clientAddress.country,
-        clientStreet: invoice.clientAddress.street,
-        clientCity: invoice.clientAddress.city,
-        clientPostCode: invoice.clientAddress.postCode,
-        clientCountry: invoice.clientAddress.country,
-        createdAt: formatted.toISOString().split("T")[0],
-        items: invoice.items.map((item) => ({
-          name: item.name,
-          quantity: item.quantity,
-          price: item.price,
-          total: parseFloat(item.price) * parseFloat(item.quantity),
+        senderStreet: invoice.senderAddress?.street || "",
+        senderCity: invoice.senderAddress?.city || "",
+        senderPostCode: invoice.senderAddress?.postCode || "",
+        senderCountry: invoice.senderAddress?.country || "",
+        clientStreet: invoice.clientAddress?.street || "",
+        clientCity: invoice.clientAddress?.city || "",
+        clientPostCode: invoice.clientAddress?.postCode || "",
+        clientCountry: invoice.clientAddress?.country || "",
+        createdAt: formatted,
+        items: (invoice.items || []).map((item) => ({
+          name: item.name || "Unnamed Item",
+          quantity: parseFloat(item.quantity || 1),
+          price: parseFloat(item.price || 0),
+          total: parseFloat(item.price || 0) * parseFloat(item.quantity || 1),
         })),
       });
+    } else {
+      const formatted = new Date().toISOString().split("T")[0];
+      setInvoiceData((prev) => ({
+        ...prev,
+        createdAt: formatted,
+      }));
     }
-  }, [invoice]);
+  }, [invoice, type]); // Include `type` in the dependency array to ensure it updates properly
 
   const handleChange = (e, index = null) => {
     const { name, value } = e.target;
@@ -387,7 +404,7 @@ export const NewInvoice = ({ setNewInvoice, type }) => {
                       <div className="flex px-2 py-2 flex-col items-start">
                         <h1>Total</h1>
                         <div className="max-w-[200px] dark:bg-[#1e2139] py-2 px-4 border-[.2px] rounded-lg focus:outline-none focus:outline-purple-400 border-gray-300 dark:border-gray-800 dark:text-white">
-                          {/* Placeholder for total value */}20000
+                          {item.total || 0}
                         </div>
                       </div>
                       <button onClick={() => handleRemoveItem(index)}>
