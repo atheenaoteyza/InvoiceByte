@@ -50,8 +50,8 @@ export const InvoiceCard = ({ invoice }) => {
           <h1 className="text-xl dark:text-white">£ {invoice.total}</h1>
         </div>
 
-        <div className="flex flex-col">
-          <h2 className="text-sm mb-4 text-gray-400 font-light text-right">
+        <div className="flex flex-col min-w-[130px]">
+          <h2 className="text-sm mb-4 text-gray-400 font-light text-center lg:text-right">
             {invoice.clientName}
           </h2>
           <InvoiceStatus type={invoice.status} />
