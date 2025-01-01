@@ -1,11 +1,33 @@
-import React, { useEffect } from "react";
-import { useSelector } from "react-redux";
-import { InvoiceCard } from "../Elements";
+import React, { useEffect, useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { InvoiceCard } from "../Elements/InvoiceCard";
+import { NewInvoice } from "../Elements/NewInvoice";
+import { filterInvoices } from "../../redux/invoiceSlice";
+import rightArrow from "../../assets/icon-arrow-right.svg";
+import { motion, AnimatePresence, delay } from "framer-motion";
+import { useNavigate } from "react-router-dom";
+import { Bounce, toast } from "react-toastify";
+import { setAsGuest } from "../../redux/authSlice";
+import "./Home.css";
 
 export const Home = () => {
+  const [newInvoice, setNewInvoice] = useState(false);
+  const [isDropdown, setIsDropdown] = useState(false);
+  const [checkedValue, setCheckedValue] = useState(""); // Track which checkbox is selected
+  const dispatch = useDispatch();
   const userId = sessionStorage.getItem("uid");
   //const invoices = useSelector((state) => state.invoices.invoices);
   const invoices = useSelector((state) => state.invoices.invoices);
+  const isGuest = useSelector((state) => state.auth.isGuest);
+
+  useEffect(() => {
+    dispatch(filterInvoices(checkedValue));
+  }, [checkedValue]);
+
+  const handleCheckboxChange = (value) => {
+    setCheckedValue(checkedValue === value ? "" : value); // Toggle selection
+  };
+
   // const invoices = {
   //   INV001: {
   //     id: "INV001",
@@ -36,12 +58,15 @@ export const Home = () => {
 
   return (
     <section
-      className="dark:bg-[#141625] scrollbar-hide duration-300 min-h-screen bg-[#f8f8fb] py-[34px] px-2 md:px-8 lg:px-12 lg:py-[72px]"
-      /* className={
+      className={
         isGuest
           ? "dark:bg-[#141625] scrollbar-hide duration-300 min-h-screen bg-[#f8f8fb] "
           : "dark:bg-[#141625] scrollbar-hide duration-300 min-h-screen bg-[#f8f8fb] py-[34px] px-2 md:px-8 lg:px-12 lg:py-[72px]"
-      } */
+      }
+      /* 
+            className="dark:bg-[#141625] scrollbar-hide duration-300 min-h-screen bg-[#f8f8fb] py-[34px] px-2 md:px-8 lg:px-12 lg:py-[72px]"
+    
+      */
     >
       <div className="dark:text-white bg-[#f8f8fb] dark:bg-[#141625] loginGuest">
         {/* isGuest ? (
@@ -82,21 +107,21 @@ export const Home = () => {
             <p className="hidden md:block dark:text-white font-medium">
               Filter by status
             </p>
+            <p className="md:hidden dark:text-white font-medium">Filter</p>
 
             <button
-              // onClick={() => setIsDropdown(!isDropdown)}
+              onClick={() => setIsDropdown(!isDropdown)}
               className="text-white inline-flex items-center right-0 hover:opacity-80 focus:outline-none font-medium rounded-lg text-sm px-3 py-2.5 text-center dark:focus:ring-blue-800"
             >
-              {/* <motion.img
+              <motion.img
                 animate={{ rotate: isDropdown ? 90 : null }}
                 src={rightArrow}
                 className="ml-0"
-              /> */}
+              />
             </button>
-            <p className="md:hidden dark:text-white font-medium">Filter</p>
 
-            {/* {isDropdown && (
-              <div className="opacity-70 w-35 bg-white dark:bg-[#1E2139] dark:text-white flex px-7 py-3 flex-col  top-[100px] lg:top-[120px] absolute shadow-2xl rounded-xl ">
+            {isDropdown && (
+              <div className="absolute opacity-70 w-35 bg-white dark:bg-[#1E2139] dark:text-white flex  flex-col px-5 lg:px-7 py-1 mt-3 lg:mt-0 lg:py-3  top-[150px] lg:top-[120px] lg:ml-[20px] shadow-2xl rounded-xl ">
                 <div
                   onClick={() => handleCheckboxChange("paid")}
                   className="items-center cursor-pointer flex space-x-2"
@@ -122,11 +147,11 @@ export const Home = () => {
                   <p className="text-[#ff8f00] bg-[#ff8f000f]">Pending</p>
                 </div>
               </div>
-            )} */}
+            )}
 
             <div className="cursor-pointer ml-3"></div>
 
-            {/* <motion.button
+            <motion.button
               whileHover={{ scale: 1.1 }}
               transition={{ type: "spring", stiffness: 500 }}
               onClick={() => {
@@ -147,7 +172,7 @@ export const Home = () => {
                 ></path>
               </svg>
               New invoice
-            </motion.button> */}
+            </motion.button>
           </div>
         </div>
 
@@ -173,9 +198,9 @@ export const Home = () => {
               ) */}
         </div>
       </div>
-      {/* <AnimatePresence>
-            {newInvoice && <NewInvoice setNewInvoice={setNewInvoice}></NewInvoice>}
-          </AnimatePresence> */}
+      <AnimatePresence>
+        {newInvoice && <NewInvoice setNewInvoice={setNewInvoice}></NewInvoice>}
+      </AnimatePresence>
     </section>
   );
 };
