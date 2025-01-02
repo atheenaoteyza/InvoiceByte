@@ -4,21 +4,24 @@ import {
   setInvoiceByUserAsync,
   updateInvoiceAsync,
 } from "./redux/invoiceThunks";
-import { login } from "./redux/authSlice";
+import { login, setAsGuest } from "./redux/authSlice";
+import { setInvoicesByUser } from "./redux/invoiceSlice";
 import { useNavigate } from "react-router-dom";
+import mockInvoices from "./components/functions/MockInvoices";
 
 function App() {
   const dispatch = useDispatch();
   const userId = sessionStorage.getItem("uid");
   const invoices = useSelector((state) => state.invoices.invoices);
   const navigate = useNavigate();
+  const { isGuest } = useSelector((state) => state.auth);
 
   useEffect(() => {
     if (userId) {
       dispatch(login());
       dispatch(setInvoiceByUserAsync(userId));
     } else {
-      navigate("/login");
+      dispatch(setAsGuest());
     }
   }, [dispatch, userId]);
 
@@ -35,6 +38,12 @@ function App() {
       updateInvoices();
     }
   }, [invoices, dispatch, userId]);
+
+  useEffect(() => {
+    if (isGuest) {
+      dispatch(setInvoicesByUser(mockInvoices));
+    }
+  }, [dispatch, isGuest]);
 }
 
 export default App;

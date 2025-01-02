@@ -7,7 +7,7 @@ import rightArrow from "../../assets/icon-arrow-right.svg";
 import { motion, AnimatePresence, delay } from "framer-motion";
 import { useNavigate } from "react-router-dom";
 import { Bounce, toast } from "react-toastify";
-import { setAsGuest } from "../../redux/authSlice";
+import { logout, setAsGuest } from "../../redux/authSlice";
 import "./Home.css";
 
 export const Home = () => {
@@ -15,10 +15,24 @@ export const Home = () => {
   const [isDropdown, setIsDropdown] = useState(false);
   const [checkedValue, setCheckedValue] = useState(""); // Track which checkbox is selected
   const dispatch = useDispatch();
-  const userId = sessionStorage.getItem("uid");
-  //const invoices = useSelector((state) => state.invoices.invoices);
   const invoices = useSelector((state) => state.invoices.invoices);
   const isGuest = useSelector((state) => state.auth.isGuest);
+  const currentInvoicesState = useSelector(
+    (state) => state.invoices.filteredInvoices
+  );
+  const navigate = useNavigate();
+  const [loading, setLoading] = useState(false);
+
+  const handleLogout = () => {
+    {
+      setLoading(true); // Start loading
+      sessionStorage.removeItem("uid");
+      sessionStorage.removeItem("token");
+      dispatch(logout());
+      setLoading(false); // Stop loading after logout is complete
+      navigate("/Login");
+    }
+  };
 
   useEffect(() => {
     dispatch(filterInvoices(checkedValue));
@@ -28,64 +42,48 @@ export const Home = () => {
     setCheckedValue(checkedValue === value ? "" : value); // Toggle selection
   };
 
-  // const invoices = {
-  //   INV001: {
-  //     id: "INV001",
-  //     paymentDue: "2024-01-15",
-  //     clientName: "John Doe",
-  //     total: "1,200.00",
-  //     status: "paid", // Possible values: "paid", "pending", "draft"
-  //   },
-  //   INV002: {
-  //     id: "INV002",
-  //     paymentDue: "2024-01-20",
-  //     clientName: "Jane Smith",
-  //     total: "2,450.50",
-  //     status: "pending",
-  //   },
-  //   INV003: {
-  //     id: "INV003",
-  //     paymentDue: "2024-02-01",
-  //     clientName: "Acme Corporation",
-  //     total: "8,999.99",
-  //     status: "draft",
-  //   },
-  // };
-
-  // useEffect(() => {
-  //   console.log("Invoices", invoiceTry);
-  // }, []);
-
   return (
     <section
       className={
         isGuest
           ? "dark:bg-[#141625] scrollbar-hide duration-300 min-h-screen bg-[#f8f8fb] "
-          : "dark:bg-[#141625] scrollbar-hide duration-300 min-h-screen bg-[#f8f8fb] py-[34px] px-2 md:px-8 lg:px-12 lg:py-[72px]"
+          : "dark:bg-[#141625] scrollbar-hide duration-300 min-h-screen bg-[#f8f8fb] py-[34px] px-2 md:px-8 lg:px-12 lg:py-[36px]"
       }
       /* 
             className="dark:bg-[#141625] scrollbar-hide duration-300 min-h-screen bg-[#f8f8fb] py-[34px] px-2 md:px-8 lg:px-12 lg:py-[72px]"
     
       */
     >
-      <div className="dark:text-white bg-[#f8f8fb] dark:bg-[#141625] loginGuest">
-        {/* isGuest ? (
+      <div className="dark:text-white bg-[#f8f8fb] dark:bg-[#141625] loginGuest p-0">
+        {isGuest ? (
           <div className="m-3">
             <button
-              // onClick={() => navigate("/Login")}
-              // className="borders cursor-pointer duration-100 ease-in-out border border-purple-500 hover:border-purple-500 dark:border-transparent dark:hover:border-purple-500 shadow-sm dark:bg-[#1E2139] bg-white"
+              onClick={() => navigate("/Login")}
+              className="rounded-lg borders cursor-pointer duration-100 ease-in-out border  hover:border-purple-500 dark:border-transparent dark:hover:border-purple-500 shadow-sm dark:bg-[#1E2139] bg-[#7c5dfa] px-4 py-2 m-1 text-white"
             >
               Sign in
             </button>
 
             <button
-              // onClick={() => navigate("/Register")}
-              // className="borders cursor-pointer duration-100 ease-in-out border border-purple-500 hover:border-purple-500 dark:border-transparent dark:hover:border-purple-500 shadow-sm dark:bg-[#1E2139] bg-white"
+              onClick={() => navigate("/Register")}
+              className="rounded-lg borders cursor-pointer duration-100 ease-in-out border  hover:border-purple-500 dark:border-transparent dark:hover:border-purple-500 shadow-sm dark:bg-[#1E2139] bg-[#7c5dfa] px-4 py-2 m-1 text-white"
             >
               Sign up
             </button>
           </div>
-        ) : null */}
+        ) : (
+          <div className="m-0 p-0 mt-0">
+            <button
+              onClick={handleLogout}
+              className={`rounded-lg cursor-pointer duration-100 ease-in-out hover:border-purple-500 dark:bg-[#1E2139] bg-[#7c5dfa] px-4 py-2 text-white ${
+                loading && "opacity-50 cursor-not-allowed"
+              }`}
+              disabled={loading} // Disable button during loading
+            >
+              {loading ? "Signing out..." : "Sign out"}
+            </button>
+          </div>
+        )}
       </div>
 
       <div className="max-w-3xl flex flex-col mx-auto my-auto">
@@ -177,25 +175,22 @@ export const Home = () => {
         </div>
 
         <div className="mt-10 space-y-4">
-          {Object.values(invoices).map((invoice, index) => (
-            <InvoiceCard key={invoice.id} invoice={invoice} />
-          ))}
-          {/* Object.values(checkedValue ? currentInvoicesState : invoices).map(
-                (invoice, index) => {
-                  const delay = index < 7 ? index * 0.2 : index * 0.1;
+          {Object.values(checkedValue ? currentInvoicesState : invoices).map(
+            (invoice, index) => {
+              const delay = index < 7 ? index * 0.2 : index * 0.1;
 
-                  return (
-                    <motion.div
-                      key={invoice.id}
-                      initial={{ opacity: 0, y: 50 }}
-                      animate={{ opacity: 1, y: 0 }}
-                      transition={{ delay: delay }}
-                    >
-                      <InvoiceCard invoice={invoice}></InvoiceCard>
-                    </motion.div>
-                  );
-                }
-              ) */}
+              return (
+                <motion.div
+                  key={invoice.id}
+                  initial={{ opacity: 0, y: 50 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: delay }}
+                >
+                  <InvoiceCard invoice={invoice}></InvoiceCard>
+                </motion.div>
+              );
+            }
+          )}
         </div>
       </div>
       <AnimatePresence>

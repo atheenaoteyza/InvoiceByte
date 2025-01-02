@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import { Link } from "react-router-dom";
 import { useRef } from "react";
 import { useNavigate } from "react-router-dom";
@@ -13,9 +13,11 @@ export const Login = () => {
   const passwordRef = useRef();
   const navigate = useNavigate();
   const dispatch = useDispatch();
+  const [loggingIn, setLoggingIn] = useState(false);
 
   const handleLogin = async (e) => {
     e.preventDefault();
+    setLoggingIn(true); // Set loading state to true
 
     const credentials = {
       email: emailRef.current.value,
@@ -32,6 +34,8 @@ export const Login = () => {
       }
     } catch (error) {
       console.error("Invalid", error);
+    } finally {
+      setLoggingIn(false); // Reset loading state to false
     }
   };
   return (
@@ -138,12 +142,22 @@ export const Login = () => {
                   Lost Password?
                 </a>
               </div>
-              <button
-                type="submit"
-                className="w-full px-5 py-3 text-base font-medium text-center text-white  rounded-lg  focus:ring-4 focus:ring-blue-300 sm:w-auto bg-[#7c5dfa] hover:opacity-80 dark:focus:ring-blue-800"
-              >
-                Login to your account
-              </button>
+              <div className="flex space-x-4">
+                <button
+                  type="submit"
+                  disabled={loggingIn} // Disable button while logging in
+                  className="w-full px-5 py-3 text-base font-medium text-center text-white  rounded-lg  focus:ring-4 focus:ring-blue-300 sm:w-auto bg-[#7c5dfa] hover:opacity-80 dark:focus:ring-blue-800"
+                >
+                  {loggingIn ? "Logging in..." : "Login to your account"}
+                </button>
+                <button
+                  type="button" // Prevent form submission
+                  onClick={() => navigate("/")}
+                  className="w-full px-5 py-3 text-base font-medium text-center text-white  rounded-lg  focus:ring-4 focus:ring-blue-300 sm:w-auto bg-[#7c5dfa] hover:opacity-80 dark:focus:ring-blue-800"
+                >
+                  Continue as guest
+                </button>
+              </div>
               <div className="text-sm font-medium text-gray-900 dark:text-white">
                 Not registered yet?{" "}
                 {/* Using React Router Link for navigation */}
