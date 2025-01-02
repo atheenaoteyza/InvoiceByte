@@ -46,8 +46,8 @@ export const Login = () => {
             We invest in the world’s potential
           </h1>
           <p className="mb-6 text-lg font-normal text-gray-500 lg:text-xl dark:text-gray-400">
-            Here at Flowbite we focus on markets where technology, innovation,
-            and capital can unlock long-term value and drive economic growth.
+            Here we focus on markets where technology, innovation, and capital
+            can unlock long-term value and drive economic growth.
           </p>
           <a
             href="#"
@@ -74,7 +74,7 @@ export const Login = () => {
         <div>
           <div className="w-full lg:max-w-xl p-6 space-y-8 sm:p-8 bg-white rounded-lg shadow-xl dark:bg-gray-800">
             <h2 className="text-2xl font-bold text-gray-900 dark:text-white">
-              Sign in to Flowbite
+              Sign in to InvoiceByte
             </h2>
             {/* Form starts here */}
             <form
@@ -162,7 +162,7 @@ export const Login = () => {
                 Not registered yet?{" "}
                 {/* Using React Router Link for navigation */}
                 <Link
-                  /* to="/Register" Path to registration page */
+                  to="/Register" //Path to registration page
                   className="text-[#7c5dfa] hover:underline"
                 >
                   Create account

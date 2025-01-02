@@ -10,7 +10,7 @@ import { motion } from "framer-motion";
 
 export const Header = () => {
   const [isDark, setIsDark] = useState(
-    JSON.parse(localStorage.getItem("darkMode")) || false
+    JSON.parse(localStorage.getItem("darkMode")) || true
   );
 
   const location = useLocation();
