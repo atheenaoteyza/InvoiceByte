@@ -252,6 +252,7 @@ export const NewInvoice = ({ setNewInvoice, type }) => {
                   onChange={handleChange}
                   type="text"
                   className="dark:bg-[#1e2139] py-2 px-4 border-[.2px] rounded-lg focus:outline-purple-400 border-gray-300 dark:border-gray-800"
+                  required
                 />
               </div>
 
