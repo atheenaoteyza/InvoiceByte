@@ -8,6 +8,7 @@ import { login, setAsGuest } from "./redux/authSlice";
 import { setInvoicesByUser } from "./redux/invoiceSlice";
 import { useNavigate } from "react-router-dom";
 import mockInvoices from "./components/functions/MockInvoices";
+import { Analytics } from "@vercel/analytics/react";
 
 function App() {
   const dispatch = useDispatch();
@@ -44,6 +45,12 @@ function App() {
       dispatch(setInvoicesByUser(mockInvoices));
     }
   }, [dispatch, isGuest]);
+
+  return (
+    <div>
+      <Analytics />
+    </div>
+  );
 }
 
 export default App;
